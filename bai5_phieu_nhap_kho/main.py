@@ -41,37 +41,59 @@ class PhieuNhap:
         return sum(sp.thanh_tien() for sp in self.danh_sach_sp)
 
     def in_phieu(self):
-        print("\n" + "="*70)
-        print(f"{'PHIẾU NHẬP KHO':^70}")
-        print(f"Mã phiếu: {self.ma_phieu:<30} Ngày lập: {self.ngay_lap}")
-        print("-" * 70)
-        print(f"{'Mã SP':<10} {'Tên Hàng':<20} {'Đơn giá':<15} {'SL':<5} {'Thành tiền':<15}")
-        print("-" * 70)
+        dong_ke = "+" + "-"*12 + "+" + "-"*22 + "+" + "-"*15 + "+" + "-"*8 + "+" + "-"*17 + "+"
         
-        # In danh sách bằng list comprehension
-        [print(sp) for sp in self.danh_sach_sp]
+        print("\n" + "="*78)
+        print(f"{'PHIẾU NHẬP KHO':^78}")
+        print("="*78)
+        print(f"| Mã phiếu: {self.ma_phieu:<30} | Ngày lập: {self.ngay_lap:<26} |")
+        print(dong_ke)
+        print(f"|{'Mã SP':^12}|{'Tên Hàng':^22}|{'Đơn giá':^15}|{'SL':^8}|{'Thành tiền':^17}|")
+        print(dong_ke)
+        
+        # In danh sách sản phẩm
+        for sp in self.danh_sach_sp:
+            print(f"|{sp.ma_sp:^12}|{sp.ten_sp:^22}|{sp.don_gia:>14,} |{sp.so_luong:>7,} |{sp.thanh_tien():>16,} |")
             
-        print("-" * 70)
-        print(f"{'TỔNG CỘNG:':<51} {self.tinh_tong_tien():,.0f} VNĐ")
-        print("="*70)
+        dong_ke_tong = "+" + "-"*60 + "+" + "-"*17 + "+"
+        print(dong_ke_tong)
+        print(f"|{'TỔNG CỘNG:':^60}|{self.tinh_tong_tien():>14,} VNĐ|")
+        print(dong_ke_tong)
 
 # --- CHƯƠNG TRÌNH CHÍNH ---
-def main():
-    # 1. Tạo phiếu
+def main_nhap_tu_ban_phim():
+    """Hàm nhập từ bàn phím"""
     print("--- KHỞI TẠO PHIẾU ---")
     ma = input("Nhập mã phiếu: ")
     ngay = input("Nhập ngày lập: ")
     phieu = PhieuNhap(ma, ngay)
     
-    # 2. Nhập hàng vào phiếu
     phieu.them_san_pham()
-    
-    # 3. Sắp xếp
     phieu.sap_xep_giam_dan()
     
-    # 4. In kết quả
     print("\n--- KẾT QUẢ SAU KHI SẮP XẾP ---")
     phieu.in_phieu()
 
+def main():
+    """Hàm chạy với dữ liệu mẫu"""
+    # Tạo phiếu nhập kho
+    phieu = PhieuNhap("PNK001", "01/02/2026")
+    
+    # Thêm sản phẩm mẫu (không qua input)
+    phieu.danh_sach_sp = [
+        SanPham("SP01", "Laptop Dell", 15000000, 5),
+        SanPham("SP02", "Chuột Logitech", 500000, 20),
+        SanPham("SP03", "Bàn phím cơ", 2000000, 10),
+        SanPham("SP04", "Màn hình LG", 8000000, 3)
+    ]
+    
+    # Sắp xếp giảm dần theo đơn giá
+    phieu.sap_xep_giam_dan()
+    
+    # In kết quả
+    print("\n--- KẾT QUẢ SAU KHI SẮP XẾP (Đơn giá giảm dần) ---")
+    phieu.in_phieu()
+
 if __name__ == "__main__":
-    main()
+    main()  # Chạy với dữ liệu mẫu
+    # main_nhap_tu_ban_phim()  # Bỏ comment để nhập từ bàn phím

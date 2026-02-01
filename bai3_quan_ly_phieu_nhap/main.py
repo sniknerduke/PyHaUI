@@ -73,37 +73,57 @@ class PhieuNhap(QuanLyNhapXuat):
             self.ds_hang.append(mh)
 
     def xuat_thong_tin(self):
-        print("\n" + "="*60)
-        print(f"{'PHIẾU NHẬP HÀNG':^60}")
-        print(f"Mã phiếu: {self.ma_phieu:<20} Ngày lập: {self.ngay_lap}")
+        dong_ke = "+" + "-"*22 + "+" + "-"*12 + "+" + "-"*12 + "+" + "-"*17 + "+"
         
-        # Xuất thông tin đối tượng NCC
-        self.ncc.xuat_thong_tin()
+        print("\n" + "="*67)
+        print(f"{'PHIẾU NHẬP HÀNG':^67}")
+        print("="*67)
+        print(f"| Mã phiếu: {self.ma_phieu:<20} | Ngày lập: {self.ngay_lap:<20} |")
+        print(f"| Mã NCC: {self.ncc.ma_so:<22} | Tên NCC: {self.ncc.ten:<20} |")
+        print(f"| Địa chỉ: {self.ncc.dia_chi:<53} |")
+        print(dong_ke)
+        print(f"|{'Tên hàng':^22}|{'Đơn giá':^12}|{'Số lượng':^12}|{'Thành tiền':^17}|")
+        print(dong_ke)
         
-        print("-" * 60)
-        print(f"{'Tên hàng':<20} {'Đơn giá':<10} {'Số lượng':<10} {'Thành tiền':<15}")
-        print("-" * 60)
-        
-        # In danh sách hàng bằng list comprehension
-        [mh.xuat_thong_tin() for mh in self.ds_hang]
+        # In danh sách hàng
+        for mh in self.ds_hang:
+            print(f"|{mh.ten_hang:^22}|{mh.don_gia:>11,} |{mh.so_luong:>11,} |{mh.thanh_tien:>16,} |")
         
         # Tính tổng tiền bằng comprehension
         tong_tien = sum(mh.thanh_tien for mh in self.ds_hang)
             
-        print("-" * 60)
-        print(f"{'Cộng thành tiền:':<42} {tong_tien:,.0f} VNĐ")
-        print("="*60)
+        print(dong_ke)
+        print(f"|{'TỔNG CỘNG:':^48}|{tong_tien:>16,} |")
+        print(dong_ke)
 
 # --- CHƯƠNG TRÌNH CHÍNH ---
-def main():
-    # Khởi tạo
+def main_nhap_tu_ban_phim():
+    """Hàm nhập từ bàn phím"""
     phieu = PhieuNhap()
-    
-    # Nhập
     phieu.nhap_thong_tin()
+    phieu.xuat_thong_tin()
+
+def main():
+    """Hàm chạy với dữ liệu mẫu"""
+    # Tạo phiếu nhập
+    phieu = PhieuNhap()
+    phieu.ma_phieu = "PN001"
+    phieu.ngay_lap = "01/02/2026"
     
-    # Xuất
+    # Tạo nhà cung cấp
+    phieu.ncc = NhaCungCap("NCC01", "Công ty ABC", "123 Nguyễn Trãi, HN")
+    
+    # Tạo danh sách mặt hàng mẫu
+    phieu.ds_hang = [
+        MatHang("Laptop Dell", 15000000, 5),
+        MatHang("Chuột Logitech", 500000, 20),
+        MatHang("Bàn phím cơ", 2000000, 10),
+        MatHang("Màn hình LG", 8000000, 3)
+    ]
+    
+    # Xuất phiếu
     phieu.xuat_thong_tin()
 
 if __name__ == "__main__":
-    main()
+    main()  # Chạy với dữ liệu mẫu
+    # main_nhap_tu_ban_phim()  # Bỏ comment để nhập từ bàn phím
