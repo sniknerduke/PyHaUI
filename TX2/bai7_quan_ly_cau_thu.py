@@ -14,14 +14,24 @@ class CauLacBo:
     def __str__(self):
         return self.ten_clb
 class CauThu(Nguoi):
-    def __init__(self, ho_ten, tuoi, quoc_tich, ma_ct, vi_tri, so_ao, cau_lac_bo):
+    def __init__(self, ho_ten, tuoi, quoc_tich, ma_ct, vi_tri, so_ao, ten_clb, ma_clb, hlv, nam_tl):
         super().__init__(ho_ten, tuoi, quoc_tich)
         self.ma_ct = ma_ct
         self.vi_tri = vi_tri
         self.so_ao = so_ao
-        self.cau_lac_bo = cau_lac_bo
+        # Hợp thành (Composition): CauThu tự tạo và quản lý CauLacBo
+        self.cau_lac_bo = CauLacBo(ten_clb, ma_clb, hlv, nam_tl)
+        # Hợp thành (Composition): Danh sách các CLB cũ quản lý bên trong
+        self.ds_clb_cu = []
+
+    def them_clb_cu(self, ten_clb, ma_clb, hlv, nam_tl):
+        """Tạo đối tượng CauLacBo và thêm vào lịch sử (Hợp thành)"""
+        clb = CauLacBo(ten_clb, ma_clb, hlv, nam_tl)
+        self.ds_clb_cu.append(clb)
+
     def __str__(self):
-        return f"{super().__str__()} | {self.ma_ct:<10} {self.vi_tri:<10} {self.so_ao:<5} | CLB: {self.cau_lac_bo}"
+        lich_su = ", ".join([c.ten_clb for c in self.ds_clb_cu]) if self.ds_clb_cu else "Không"
+        return f"{super().__str__()} | {self.ma_ct:<10} {self.vi_tri:<10} {self.so_ao:<5} | CLB: {self.cau_lac_bo.ten_clb:<10} | Cũ: {lich_su}"
 def nhap_cau_lac_bo():
     print("\n--- Nhập thông tin Câu lạc bộ ---")
     ten = input("Tên CLB: ")
@@ -37,7 +47,7 @@ def nhap_cau_thu(clb):
     ma = input("  Mã cầu thủ: ")
     vt = input("  Vị trí: ")
     so = int(input("  Số áo: "))
-    return CauThu(ten, tuoi, qt, ma, vt, so, clb)
+    return CauThu(ten, tuoi, qt, ma, vt, so, clb.ten_clb, clb.ma_clb, clb.hlv, clb.nam_tl)
 def nhap_danh_sach_cau_thu(clb):
     ds = []
     while True:
@@ -52,14 +62,15 @@ def nhap_danh_sach_cau_thu(clb):
         ds.append(nhap_cau_thu(clb))
     return ds
 def in_dong_ke():
-    print("+" + "-"*22 + "+" + "-"*6 + "+" + "-"*15 + "+" + "-"*10 + "+" + "-"*12 + "+" + "-"*7 + "+" + "-"*12 + "+")
+    print("+" + "-"*22 + "+" + "-"*6 + "+" + "-"*15 + "+" + "-"*10 + "+" + "-"*12 + "+" + "-"*7 + "+" + "-"*12 + "+" + "-"*20 + "+")
 def in_header():
-    print(f"|{'Họ tên':^22}|{'Tuổi':^6}|{'Quốc tịch':^15}|{'Mã CT':^10}|{'Vị trí':^12}|{'Số áo':^7}|{'CLB':^12}|")
+    print(f"|{'Họ tên':^22}|{'Tuổi':^6}|{'Quốc tịch':^15}|{'Mã CT':^10}|{'Vị trí':^12}|{'Số áo':^7}|{'CLB':^12}|{'CLB Cũ':^20}|")
 def in_cau_thu(ct):
-    print(f"|{ct.ho_ten:^22}|{ct.tuoi:^6}|{ct.quoc_tich:^15}|{ct.ma_ct:^10}|{ct.vi_tri:^12}|{ct.so_ao:^7}|{str(ct.cau_lac_bo):^12}|")
+    lich_su = ", ".join([c.ten_clb for c in ct.ds_clb_cu]) if ct.ds_clb_cu else ""
+    print(f"|{ct.ho_ten:^22}|{ct.tuoi:^6}|{ct.quoc_tich:^15}|{ct.ma_ct:^10}|{ct.vi_tri:^12}|{ct.so_ao:^7}|{ct.cau_lac_bo.ten_clb:^12}|{lich_su:^20}|")
 def in_bang_cau_thu(ds_cau_thu, tieu_de="DANH SÁCH CẦU THỦ"):
-    print("\n" + "="*90)
-    print(f"{tieu_de:^90}")
+    print("\n" + "="*112)
+    print(f"{tieu_de:^112}")
     in_dong_ke()
     in_header()
     in_dong_ke()
@@ -91,12 +102,19 @@ def main():
     print(f"|{'HLV':^20}|{clb_mu.hlv:^25}|")
     print(f"|{'Năm thành lập':^20}|{clb_mu.nam_tl:^25}|")
     print("+" + "-"*20 + "+" + "-"*25 + "+")
+    
+    # Lấy thông tin từ clb_mu để truyền vào (Composition)
+    t, m, h, n = clb_mu.ten_clb, clb_mu.ma_clb, clb_mu.hlv, clb_mu.nam_tl
     ds_cau_thu = [
-        CauThu("Cristiano Ronaldo", 39, "Bồ Đào Nha", "CR7", "Tiền đạo", 9, clb_mu),
-        CauThu("Marcus Rashford", 26, "Anh", "MR10", "Tiền đạo", 10, clb_mu),
-        CauThu("Bruno Fernandes", 29, "Bồ Đào Nha", "BF8", "Tiền vệ", 8, clb_mu),
-        CauThu("Kobbie Mainoo", 19, "Anh", "KM37", "Tiền vệ", 37, clb_mu)
+        CauThu("Cristiano Ronaldo", 39, "Bồ Đào Nha", "CR7", "Tiền đạo", 9, t, m, h, n),
+        CauThu("Marcus Rashford", 26, "Anh", "MR10", "Tiền đạo", 10, t, m, h, n),
+        CauThu("Bruno Fernandes", 29, "Bồ Đào Nha", "BF8", "Tiền vệ", 8, t, m, h, n),
+        CauThu("Kobbie Mainoo", 19, "Anh", "KM37", "Tiền vệ", 37, t, m, h, n)
     ]
+    # Thêm lịch sử CLB (Hợp thành) - Chỉ tạo dữ liệu, object CLB được sinh ra bên trong CT
+    ds_cau_thu[0].them_clb_cu("Real Madrid", "RMA", "Ancelotti", 1902)
+    ds_cau_thu[0].them_clb_cu("Juventus", "JUV", "Allegri", 1897)
+
     in_bang_cau_thu(ds_cau_thu, "2. DANH SÁCH CẦU THỦ MẪU")
     print("\n" + "="*50)
     print(f"{'3. CẬP NHẬT SỐ ÁO RONALDO':^50}")

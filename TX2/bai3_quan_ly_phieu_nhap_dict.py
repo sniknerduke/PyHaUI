@@ -26,7 +26,8 @@ class MatHang(QuanLyNhapXuat):
         self.so_luong = so_luong
     @property
     def thanh_tien(self):
-        return self.don_gia * self.so_luong
+        # Ép kiểu về số để tránh lỗi nếu vô tình giá trị là string
+        return float(self.don_gia) * float(self.so_luong)
     def nhap_thong_tin(self):
         self.ten_hang = input("Tên hàng: ")
         self.don_gia = float(input("Đơn giá: "))

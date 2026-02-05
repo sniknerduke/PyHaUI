@@ -35,14 +35,10 @@ def bo_sung_chi_phi(dssk):
                 except ValueError:
                     print("  Lỗi nhập số.")
 def tinh_chi_phi_tb(dssk):
-    tong_chi_phi = 0
-    count = 0
-    for sk in dssk:
-        val = sk.get("chi_phi", 0)
-        tong_chi_phi += val
-        count += 1
-    if count == 0: return 0
-    return tong_chi_phi / count
+    if not dssk: return 0
+    # Sử dụng list comprehension để lấy danh sách chi phí và tính trung bình
+    tong_chi_phi = sum([sk.get("chi_phi", 0) for sk in dssk])
+    return tong_chi_phi / len(dssk)
 def sap_xep_tang_dan(dssk):
     dssk.sort(key=lambda x: x["so_nguoi"])
 def tim_su_kien_dong_nhat(dssk):
